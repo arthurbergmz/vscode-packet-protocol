@@ -1,0 +1,216 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Packet Protocol",
+	"patterns": [
+		{ "include": "#imports" },
+		{ "include": "#typeStatement" },
+		{ "include": "#typeBlock" },
+		{ "include": "#regularWrapperBlock" },
+		{ "include": "#genericWrapperBlock" },
+		{ "include": "#enumBlock" },
+		{ "include": "#keywords" },
+		{ "include": "#comments" }
+	],
+	"repository": {
+		"imports": {
+			"begin": "\\s*(^import)\\s+",
+			"end": "$",
+			"beginCaptures": {
+				"1": { "name": "keyword.control.packetProtocol" }
+			},
+			"patterns": [
+				{ "include": "#comments" },
+				{
+					"begin": "\\{",
+					"end": "\\}",
+					"match": "(?:\\{|\\,)\\s*\\w+\\s+(as)\\s+\\w+\\b",
+					"captures": {
+						"1": { "name": "keyword.control.packetProtocol" }
+					}
+				},
+				{
+					"match": "\\}\\s+(from)\\b(\\\".*\\\")?",
+					"captures": {
+						"1": { "name": "keyword.control.packetProtocol" },
+						"2": {
+							"name": "string.quoted.double.packetProtocol",
+							"patterns": [
+								{
+									"name": "constant.character.escape.packetProtocol",
+									"match": "\\\\."
+								}
+							]
+						}
+					}
+				},
+				{
+					"match": "(\\\".*\\\")(?:\\s+(as)\\s+)?",
+					"captures": {
+						"1": {
+							"name": "string.quoted.double.packetProtocol",
+							"patterns": [
+								{
+									"name": "constant.character.escape.packetProtocol",
+									"match": "\\\\."
+								}
+							]
+						},
+						"2": { "name": "keyword.control.packetProtocol" }
+					}
+				}
+			]
+		},
+		"typeStatement": {
+			"begin": "\\s*(type)\\s+((?!(?:type|wrapper|enum|import|bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)\\s+)\\w+)\\s+(?:(bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)\\b|(\\w+))",
+			"beginCaptures": {
+				"1": { "name": "keyword.control.packetProtocol" },
+				"2": { "name": "entity.name.class.packetProtocol" },
+				"3": { "name": "keyword.control.packetProtocol" },
+				"4": { "name": "entity.name.function.packetProtocol" }
+			},
+			"end": "$",
+			"patterns": [
+				{ "include": "#comments" }
+			]
+		},
+		"typeBlock": {
+			"begin": "\\s*(type)\\s+((?!(?:type|wrapper|enum|import|bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)\\s+)\\w+)\\s*{",
+			"beginCaptures": {
+				"1": { "name": "keyword.control.packetProtocol" },
+				"2": { "name": "entity.name.class.packetProtocol" }
+			},
+			"end": "\\}$",
+			"patterns": [
+				{ "include": "#comments" },
+				{ "include": "#regularStructureTypes" },
+				{ "include": "#defaultValue" }
+			]
+		},
+		"genericWrapperBlock": {
+			"begin": "\\s*(wrapper)\\s+((?!(?:type|wrapper|enum|import|bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)<)\\w+)<(type)>\\s*{",
+			"beginCaptures": {
+				"1": { "name": "keyword.control.packetProtocol" },
+				"2": { "name": "entity.name.class.packetProtocol" },
+				"3": { "name": "variable.parameter.packetProtocol" }
+			},
+			"end": "\\}$",
+			"patterns": [
+				{ "include": "#comments" },
+				{ "include": "#genericStructureTypes" },
+				{ "include": "#defaultValue" }			
+			]
+		},
+		"regularWrapperBlock": {
+			"begin": "\\s*(wrapper)\\s+((?!(?:type|wrapper|enum|import|bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)<)\\w+)<(?:(bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)|(?!type>)(\\w+))>\\s*{",
+			"beginCaptures": {
+				"1": { "name": "keyword.control.packetProtocol" },
+				"2": { "name": "entity.name.class.packetProtocol" },
+				"3": { "name": "keyword.control.packetProtocol" },
+				"4": { "name": "entity.name.function.packetProtocol" }
+			},
+			"end": "\\}$",
+			"patterns": [
+				{ "include": "#comments" },
+				{ "include": "#regularStructureTypes" },
+				{ "include": "#defaultValue" }
+			]
+		},
+		"genericStructureTypes": {
+			"begin": "\\s*(optional\\s+)?(?:(bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)|(type)|((?!(?:wrapper|enum|import)\\s+)\\w+))\\b",
+			"beginCaptures": {
+				"1": { "name": "keyword.control.packetProtocol" },
+				"2": { "name": "keyword.control.packetProtocol" },
+				"3": { "name": "variable.parameter.packetProtocol" },
+				"4": { "name": "entity.name.function.packetProtocol" }
+			},
+			"end": "$",
+			"patterns": [
+				{ "include": "#comments" },
+				{ "include": "#defaultValue" }
+			]
+		},
+		"regularStructureTypes": {
+			"begin": "\\s*(optional\\s+)?(?:(bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)|((?!(?:type|wrapper|enum|import)\\b)\\w+))\\b",
+			"beginCaptures": {
+				"1": { "name": "keyword.control.packetProtocol" },
+				"2": { "name": "keyword.control.packetProtocol" },
+				"3": { "name": "entity.name.function.packetProtocol" }
+			},
+			"end": "$",
+			"patterns": [
+				{ "include": "#comments" },
+				{ "include": "#defaultValue" }
+			]
+		},
+		"enumBlock": {
+			"begin": "\\s*(enum)\\s+(?:(bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)\\s+((?!(?:type|wrapper|enum|import|bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)\\s+)\\w+)|(\\w+)\\s+((?!(?:type|wrapper|enum|import|bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)\\s+)\\w+)|((?!(?:type|wrapper|enum|import|bool|bytes|double|float|int32|int64|int|uint32|uint64|map|string)\\s+)\\w+))\\s*{",
+			"beginCaptures": {
+				"1": { "name": "keyword.control.packetProtocol" },
+				"2": { "name": "keyword.control.packetProtocol" },
+				"3": { "name": "entity.name.class.packetProtocol" },
+				"4": { "name": "entity.name.function.packetProtocol" },
+				"5": { "name": "entity.name.class.packetProtocol" },
+				"6": { "name": "entity.name.class.packetProtocol" }
+			},
+			"end": "\\}$",
+			"patterns": [
+				{ "include": "#comments" },
+				{ "include": "#defaultValue" }
+			]
+		},
+		"defaultValue": {
+			"begin": "(\\=)\\s*",
+			"beginCaptures": {
+				"1": { "name": "keyword.operator.packetProtocol" }
+			},
+			"end": "$",
+			"patterns": [
+				{ "include": "#strings" },
+				{ "include": "#comments" },
+				{
+					"name": "constant.numeric.packetProtocol",
+					"match": "\\d*\\.?\\d+"
+				},
+				{
+					"match": "(\\w+)\\.\\w+",
+					"captures": {
+						"1": { "name": "entity.name.function.packetProtocol" }
+					}
+				},
+				{
+					"name": "constant.language.boolean.packetProtocol",
+					"match": "\\b(true|false)\\b"
+				}
+			]
+		},
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.packetProtocol",
+					"match": "\\b^(type|enum|wrapper|import)\\b"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.packetProtocol",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.packetProtocol",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.double-slash.packetProtocol",
+					"begin": "//",
+					"end": "$\\n"
+				}
+			]	
+		}
+	},
+	"scopeName": "source.packetProtocol"
+}

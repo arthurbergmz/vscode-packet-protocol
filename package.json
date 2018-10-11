@@ -1,0 +1,26 @@
+{
+    "name": "vscode-packet-protocol",
+    "displayName": "vscode-packet-protocol",
+    "description": "Packet Protocol support for Visual Studio Code.",
+    "version": "0.0.1",
+    "publisher": "arthurbergmz",
+    "engines": {
+        "vscode": "^1.27.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "packetProtocol",
+            "aliases": ["Packet Protocol", "packetProtocol", "packet-protocol"],
+            "extensions": [".packet"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "packetProtocol",
+            "scopeName": "source.packetProtocol",
+            "path": "./syntaxes/packetProtocol.json"
+        }]
+    }
+}
